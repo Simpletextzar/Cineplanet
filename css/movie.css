@@ -1,0 +1,23 @@
+.container_standard {
+    width: 100%;
+    height: 80vh;
+    background-color: red;
+    justify-content: center;
+    display: flex;
+}
+.container-content {
+    width: 70%;
+    background-color: red;
+    flex-direction: column;
+    display: flex;
+}
+.movie-detail-grid{
+    
+    display: flex;
+}
+.movie-grid--movie-photo{
+    width: 50%;
+}
+.movie-grid--movie-photo img{
+    width: 100%;
+}
