@@ -21,11 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['asientos'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cineplanet</title>
+    <title>Productos</title>
     <link rel="stylesheet" href="reset.css">
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="css/movie.css">
-    <link rel="stylesheet" href="css/seat.css">
 </head>
 <body>
     <div id="root">
@@ -95,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['asientos'])) {
                     </div>
 
 
-<form class="seat-form" method="POST" action="productos.php">
+<form class="seat-form" method="POST" action="">
     <div class="seat-grid">
         <?php foreach ($seats_by_row as $fila => $columnas): ?>
             <div class="seat-row">
