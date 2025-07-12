@@ -38,7 +38,10 @@
     background-color: #E53935;
     cursor: not-allowed;
 }
-
+.seat.selected {
+    background-color: red;
+    color: white;
+}
 .seat-legend {
     margin-top: 20px;
     margin-bottom: 10px;
@@ -51,4 +54,7 @@
     width: 20px;
     height: 20px;
     border-radius: 3px;
+}
+.seat-legend--screen {
+    align-self: center;
 }
