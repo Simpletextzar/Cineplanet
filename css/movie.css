@@ -32,6 +32,7 @@
 .cinema-showcase--name{
     color: #004A8C;
     font-size: 2rem;
+    padding-left: .4rem;
 }
 .cinema-showcase--details{
     flex-direction: row;
