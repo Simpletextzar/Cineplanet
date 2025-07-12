@@ -4,6 +4,17 @@ $mysqli = new mysqli("localhost", "root", "", "cineplanet_bd");
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
+
+session_start();
+if (isset($_GET['id_pelicula'])) {
+    $_SESSION['id_pelicula'] = $_GET['id_pelicula'];
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['asientos'])) {
+    $_SESSION['asientos'] = $_POST['asientos'];
+    // Optionally redirect or show a confirmation
+    // header('Location: confirmacion.php');
+    // exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -83,26 +94,29 @@ if ($mysqli->connect_error) {
                         <h2>Pantalla</h2>
                     </div>
 
-                    <div class="seat-grid">
-    <?php foreach ($seats_by_row as $fila => $columnas): ?>
-        <div class="seat-row">
-            <span class="seat-label"><?= htmlspecialchars($fila) ?></span>
-            <?php foreach ($columnas as $col => $asiento): ?>
-                <?php
-                    // If $asiento is a string like "libre" or "ocupado", convert it to array form
-                    $estado = is_array($asiento) ? $asiento['estado'] : $asiento;
-                    $id_asiento = is_array($asiento) ? $asiento['id_asiento'] : "$fila$col";
-                ?>
-                <span class="seat <?= $estado ?>" 
-                      data-id="<?= htmlspecialchars($id_asiento) ?>" 
-                      data-fila="<?= htmlspecialchars($fila) ?>" 
-                      data-columna="<?= htmlspecialchars($col) ?>">
-                    <?= $col ?>
-                </span>
-            <?php endforeach; ?>
-        </div>
-    <?php endforeach; ?>
-</div>
+
+<form class="seat-form" method="POST" action="">
+    <div class="seat-grid">
+        <?php foreach ($seats_by_row as $fila => $columnas): ?>
+            <div class="seat-row">
+                <span class="seat-label"><?= htmlspecialchars($fila) ?></span>
+                <?php foreach ($columnas as $col => $asiento): ?>
+                    <?php
+                        $estado = is_array($asiento) ? $asiento['estado'] : $asiento;
+                        $id_asiento = is_array($asiento) ? $asiento['id_asiento'] : "$fila$col";
+                        $disabled = ($estado !== 'libre') ? 'disabled' : '';
+                    ?>
+                    <label class="seat <?= $estado ?>">
+                        <input type="checkbox" name="asientos[]" value="<?= htmlspecialchars($id_asiento) ?>" <?= $disabled ?>>
+                        <span><?= $col ?></span>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
+    <button class="seat-form--button" type="submit">Reservar asientos</button>
+</form>
+                 
 
 
 
