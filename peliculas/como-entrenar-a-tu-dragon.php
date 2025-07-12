@@ -82,12 +82,13 @@ if ($mysqli->connect_error) {
                             </div>
                             <div class="cinema-showcase--details">
                                 <?php
+                                $id_pelicula = 11;
                                 $result = $mysqli->query("SELECT hora FROM funciones WHERE id_pelicula = 11 ORDER BY hora");
                                 if ($result && $result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) {
                                         $time = date("h:i a", strtotime($row["hora"])); // Format to 06:40 pm
                                         echo '<div class="showtime-selector">
-                                                <a class="button-showtime-selector" href="../asientos.php">' . $time . '</a>
+                                                <a class="button-showtime-selector" href="../asientos.php?id_pelicula=' . $id_pelicula . '">' . $time . '</a>
                                               </div>';
                                     }
                                 } else {
