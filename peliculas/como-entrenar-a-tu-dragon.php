@@ -1,3 +1,10 @@
+<?php
+$mysqli = new mysqli("localhost", "root", "", "cineplanet_bd");
+
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,15 +81,19 @@
                                 </div>
                             </div>
                             <div class="cinema-showcase--details">
-                                <div class="showtime-selector">
-                                    <button class="button-showtime-selector">06:40 pm</button>
-                                </div>
-                                <div class="showtime-selector">
-                                    <button class="button-showtime-selector">08:40 pm</button>
-                                </div>
-                                <div class="showtime-selector">
-                                    <button class="button-showtime-selector">10:40 pm</button>
-                                </div>
+                                <?php
+                                $result = $mysqli->query("SELECT hora FROM funciones WHERE id_pelicula = 11 ORDER BY hora");
+                                if ($result && $result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        $time = date("h:i a", strtotime($row["hora"])); // Format to 06:40 pm
+                                        echo '<div class="showtime-selector">
+                                                <a class="button-showtime-selector" href="../asientos.php">' . $time . '</a>
+                                              </div>';
+                                    }
+                                } else {
+                                    echo "No showtimes available.";
+                                }
+                                ?>
                             </div>
                         </div>
                          

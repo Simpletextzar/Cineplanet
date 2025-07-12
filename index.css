@@ -1,6 +1,9 @@
 * {
     font-family: 'Roboto';
 }
+a {
+    text-decoration: none;
+}
 .showtimes-grid{
     width: 100%;
     height: 10rem;
