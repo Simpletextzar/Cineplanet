@@ -1,0 +1,54 @@
+.seat-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+    align-self: center;
+}
+
+.seat-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.seat-label {
+    width: 30px;
+    font-weight: bold;
+}
+
+.seat {
+    width: 25px;
+    height: 25px;
+    display: inline-block;
+    text-align: center;
+    line-height: 25px;
+    border-radius: 4px;
+    font-size: 12px;
+    background-color: #ccc;
+    color: white;
+}
+
+.seat.libre {
+    background-color: #4CAF50;
+    cursor: pointer;
+}
+
+.seat.ocupado {
+    background-color: #E53935;
+    cursor: not-allowed;
+}
+
+.seat-legend {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.seat-legend .seat {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+}

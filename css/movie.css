@@ -45,7 +45,8 @@
     padding: .4rem;
     border-radius: 10px;
 }
-.button-showtime-selector{
+a.button-showtime-selector{
+    text-decoration: none;
     color: #004A8C;
     background-color: transparent;
     border-style: none;
