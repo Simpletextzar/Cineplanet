@@ -1,5 +1,6 @@
 <?php
 $mysqli = new mysqli("localhost", "root", "", "cineplanet_bd");
+// falta crear la siguiente pagina pago.php y luego boleta.php
 
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
