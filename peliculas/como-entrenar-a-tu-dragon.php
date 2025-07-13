@@ -4,6 +4,50 @@ $mysqli = new mysqli("localhost", "root", "", "cineplanet_bd");
 if ($mysqli->connect_error) {
     die("Connection failed: " . $mysqli->connect_error);
 }
+session_start();
+$id_pelicula = 11;
+if (isset($_GET['id_pelicula'])) {
+    $_SESSION['id_pelicula'] = $_GET['id_pelicula'];
+}
+if (isset($_GET['id_funcion'])) {
+    $_SESSION['id_funcion'] = $_GET['id_funcion'];
+}
+if (isset($_GET['id_ciudad'])) {
+    $_SESSION['id_ciudad'] = $_GET['id_ciudad'];
+}
+$query = "
+    SELECT c.id_cine, c.nombre AS cine_nombre, c.direccion, ci.id_ciudad, ci.nombre AS ciudad_nombre
+    FROM cines c
+    JOIN salas_cine sc ON sc.id_cine = c.id_cine
+    JOIN funciones f ON f.id_sala_cine = sc.id_sala_cine
+    JOIN ciudades ci ON c.id_ciudad = ci.id_ciudad
+    WHERE f.id_pelicula = $id_pelicula
+    GROUP BY c.id_cine
+";
+$cines_result = $mysqli->query($query);
+
+$cines = [];
+if ($cines_result && $cines_result->num_rows > 0) {
+    while ($cine = $cines_result->fetch_assoc()) {
+        // Obtenemos funciones y cines para la pelicula
+        $funciones_query = "
+            SELECT f.id_funcion, f.hora, f.fecha, f.formato, f.version_idioma, f.precio
+            FROM funciones f
+            JOIN salas_cine sc ON f.id_sala_cine = sc.id_sala_cine
+            WHERE sc.id_cine = {$cine['id_cine']} AND f.id_pelicula = $id_pelicula
+            ORDER BY f.fecha, f.hora
+        ";
+        $funciones_result = $mysqli->query($funciones_query);
+        $funciones = [];
+        if ($funciones_result && $funciones_result->num_rows > 0) {
+            while ($funcion = $funciones_result->fetch_assoc()) {
+                $funciones[] = $funcion;
+            }
+        }
+        $cine['funciones'] = $funciones;
+        $cines[] = $cine;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,36 +111,28 @@ if ($mysqli->connect_error) {
                         <h1 class="title-container--title">Elegir cine</h1>
                     </div>
                     <div class="cinema-showcase-grid">
+
+                    <?php foreach ($cines as $cine): ?>
                         <div class="cinema-showcase">
-                            <h3 class="cinema-showcase--name">CP Tacna</h3>
-                            <div class="cinema-showcase--formats">
-                                <div class="cinema-showcase--formats-dimensions">
-                                    <p>3D</p>
-                                </div>
-                                <div class="cinema-showcase--formats-theater">
-                                    <p>REGULAR</p>
-                                </div>
-                                <div class="cinema-showcase--formats-language">
-                                    <p>DOBLADA</p>
-                                </div>
-                            </div>
+                            <h3 class="cinema-showcase--name"><?= htmlspecialchars($cine['cine_nombre']) ?> (<?= htmlspecialchars($cine['ciudad_nombre']) ?>)</h3>
+                            <p><?= htmlspecialchars($cine['direccion']) ?></p>
                             <div class="cinema-showcase--details">
-                                <?php
-                                $id_pelicula = 11;
-                                $result = $mysqli->query("SELECT hora FROM funciones WHERE id_pelicula = 11 ORDER BY hora");
-                                if ($result && $result->num_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        $time = date("h:i a", strtotime($row["hora"])); // Format to 06:40 pm
-                                        echo '<div class="showtime-selector">
-                                                <a class="button-showtime-selector" href="../asientos.php?id_pelicula=' . $id_pelicula . '">' . $time . '</a>
-                                              </div>';
-                                    }
-                                } else {
-                                    echo "No showtimes available.";
-                                }
-                                ?>
+                                <?php if (count($cine['funciones']) > 0): ?>
+                                    <?php foreach ($cine['funciones'] as $funcion): ?>
+                                        <div class="showtime-selector">
+                                            <a class="button-showtime-selector"
+                                               href="../asientos.php?id_pelicula=<?= $id_pelicula ?>&id_funcion=<?= $funcion['id_funcion'] ?>&id_ciudad=<?= $cine['id_ciudad'] ?>">
+                                                <?= date("d/m h:i a", strtotime($funcion['fecha'] . ' ' . $funcion['hora'])) ?>
+                                                <?= htmlspecialchars($funcion['formato']) ?> <?= htmlspecialchars($funcion['version_idioma']) ?>
+                                            </a>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <span>No hay funciones disponibles.</span>
+                                <?php endif; ?>
                             </div>
                         </div>
+                    <?php endforeach; ?>
                          
                     </div>
                 </div>
