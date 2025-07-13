@@ -73,36 +73,11 @@ if ($result && $result->num_rows > 0) {
             <div class="container container_standard movie_container">
                 <div class="container-content">
                     <div class="title-container">
-                        <h1 class="title-container--title">Elegir productos</h1>
+                        <h1 class="title-container--title">Confirmar pago</h1>
                     </div>
-                    <form class="product-form" method="POST" action="pago.php">
-                        <div class="productos-lista">
-                            <?php foreach ($productos as $producto): ?>
-                                <div class="producto-item">
-                                    <label>
-                                        <input type="checkbox" name="productos[<?= $producto['id_producto'] ?>]" value="0" style="margin-right:8px;">
-                                        <?= htmlspecialchars($producto['nombre']) ?>
-                                    </label>
-                                    <p>Precio: S/ <?= number_format($producto['precio'], 2) ?></p>
-                                    <input type="number" name="cantidad[<?= $producto['id_producto'] ?>]" value="0" min="0" step="1" style="width:50px;" <?= !isset($_POST['productos'][$producto['id_producto']]) ? 'disabled' : '' ?>>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button class="button-product-form" type="submit">Continuar</button>
-                    </form>
                 </div>
             </div>
         </div>
     </div>
-    <script>
-        // Enable/disable quantity input based on checkbox
-        document.querySelectorAll('input[type="checkbox"][name^="productos"]').forEach(function(checkbox) {
-            checkbox.addEventListener('change', function() {
-                var qtyInput = document.querySelector('input[name="cantidad[' + this.name.match(/\d+/)[0] + ']"]');
-                qtyInput.disabled = !this.checked;
-            });
-        });
-    </script>
-
 </body>
 </html>
