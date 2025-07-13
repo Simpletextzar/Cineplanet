@@ -6,15 +6,6 @@ if ($mysqli->connect_error) {
 }
 session_start();
 $id_pelicula = 11;
-if (isset($_GET['id_pelicula'])) {
-    $_SESSION['id_pelicula'] = $_GET['id_pelicula'];
-}
-if (isset($_GET['id_funcion'])) {
-    $_SESSION['id_funcion'] = $_GET['id_funcion'];
-}
-if (isset($_GET['id_ciudad'])) {
-    $_SESSION['id_ciudad'] = $_GET['id_ciudad'];
-}
 $query = "
     SELECT c.id_cine, c.nombre AS cine_nombre, c.direccion, ci.id_ciudad, ci.nombre AS ciudad_nombre
     FROM cines c
