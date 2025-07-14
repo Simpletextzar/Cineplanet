@@ -1,6 +1,12 @@
 <?php
 session_start();
 
+echo '<h2>Resumen Final de Compra:</h2>';
+echo '<pre>';
+print_r($_SESSION['compra']);
+echo '</pre>';
+
+
 $compra = $_SESSION['compra'] ?? null;
 
 if (!$compra) {
@@ -59,7 +65,7 @@ echo "<h3>🍿 Productos:</h3>";
 if (!empty($compra['productos'])) {
   echo "<ul>";
   foreach ($compra['productos'] as $producto) {
-    echo "<li>" . htmlspecialchars($producto['nombre']) . ": " . intval($producto['cantidad']) . "</li>";
+    echo "<li>" . htmlspecialchars($producto['id_producto']) . ": " . intval($producto['cantidad']) . "</li>";
   }
   echo "</ul>";
 } else {

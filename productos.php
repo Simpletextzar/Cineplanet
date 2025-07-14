@@ -1,104 +1,126 @@
 <?php
-include 'conexion.php'; 
-
+include 'conexion.php';
 session_start();
-if (isset($_GET['id_pelicula'])) {
-    $_SESSION['id_pelicula'] = $_GET['id_pelicula'];
-}
 
-// Handle product selection
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['productos'])) {
-    // productos is an array: [id_producto => cantidad]
-    $_SESSION['productos'] = [];
-    foreach ($_POST['productos'] as $id => $qty) {
-        $qty = max(1, intval($qty));
-        $_SESSION['productos'][$id] = $qty;
-    }
-} else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // If no products selected, clear session
-    $_SESSION['productos'] = [];
+// Validar que haya cine elegido
+if (!isset($_SESSION['compra']['cine'])) {
+  die("No se ha elegido un cine.");
 }
+$id_cine = intval($_SESSION['compra']['cine']);
+
+// Consulta: trae productos y la cantidad disponible para el cine
+$query = "
+  SELECT p.id_producto, p.nombre, p.precio, cp.cantidad
+  FROM productos p
+  JOIN cines_productos cp ON p.id_producto = cp.id_producto
+  WHERE cp.id_cine = ?
+";
+$stmt = $mysqli->prepare($query);
+$stmt->bind_param("i", $id_cine);
+$stmt->execute();
+$result = $stmt->get_result();
 
 $productos = [];
-$result = $mysqli->query("SELECT id_producto, nombre, precio FROM productos");
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $productos[] = $row;
-    }
+while ($row = $result->fetch_assoc()) {
+  $productos[] = $row;
 }
-
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos</title>
-    <link rel="stylesheet" href="reset.css">
-    <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="css/movie.css">
-    <link rel="stylesheet" href="css/producto.css">
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Elegir productos</title>
+  <link rel="stylesheet" href="reset.css">
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="css/movie.css">
+  <link rel="stylesheet" href="css/producto.css">
+  <style>
+    .productos-lista {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .producto-item {
+      border: 1px solid #ddd;
+      padding: 16px;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+
+    .producto-item p {
+      margin: 8px 0;
+    }
+
+    .button-product-form {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .button-product-form:hover {
+      background: #0056b3;
+    }
+  </style>
 </head>
 <body>
-    <div id="root">
-        <div class="home-page">
-            <div class="hero-header">
-                <div class="header">
-                    <div class="header--content">
-                        <div class="header_large">
-                            <a href="index.html" class="header--logo-container">
-                                <img class="header--logo" src="img/logo/Cineplanet_logo.svg">
-                            </a>
-                            <ul class="header--main-menu" id="menu-text">
-                                <li class="header--main-menu-item">
-                                    <a class="header--main-menu-link">Películas</a>
-                                </li>
-                                <li class="header--main-menu-item">
-                                    <a class="header--main-menu-link">Cines</a>
-                                </li>
-                                <li class="header--main-menu-item">
-                                    <a class="header--main-menu-link">Dulcería</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="container container_standard movie_container">
-                <div class="container-content">
-                    <div class="title-container">
-                        <h1 class="title-container--title">Elegir productos</h1>
-                    </div>
-                    <form class="product-form" method="POST" action="pago.php">
-                        <div class="productos-lista">
-                            <?php foreach ($productos as $producto): ?>
-                                <div class="producto-item">
-                                    <label>
-                                        <input type="checkbox" name="productos[<?= $producto['id_producto'] ?>]" value="0" style="margin-right:8px;">
-                                        <?= htmlspecialchars($producto['nombre']) ?>
-                                    </label>
-                                    <p>Precio: S/ <?= number_format($producto['precio'], 2) ?></p>
-                                    <input type="number" name="cantidad[<?= $producto['id_producto'] ?>]" value="0" min="0" step="1" style="width:50px;" <?= !isset($_POST['productos'][$producto['id_producto']]) ? 'disabled' : '' ?>>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <button class="button-product-form" type="submit">Continuar</button>
-                    </form>
-                </div>
-            </div>
+<div id="root">
+  <div class="home-page">
+    <div class="hero-header">
+      <div class="header">
+        <div class="header--content">
+          <div class="header_large">
+            <a href="index.html" class="header--logo-container">
+              <img class="header--logo" src="img/logo/Cineplanet_logo.svg">
+            </a>
+            <ul class="header--main-menu" id="menu-text">
+              <li class="header--main-menu-item">
+                <a class="header--main-menu-link">Películas</a>
+              </li>
+              <li class="header--main-menu-item">
+                <a class="header--main-menu-link">Cines</a>
+              </li>
+              <li class="header--main-menu-item">
+                <a class="header--main-menu-link">Dulcería</a>
+              </li>
+            </ul>
+          </div>
         </div>
+      </div>
     </div>
-    <script>
-        // Enable/disable quantity input based on checkbox
-        document.querySelectorAll('input[type="checkbox"][name^="productos"]').forEach(function(checkbox) {
-            checkbox.addEventListener('change', function() {
-                var qtyInput = document.querySelector('input[name="cantidad[' + this.name.match(/\d+/)[0] + ']"]');
-                qtyInput.disabled = !this.checked;
-            });
-        });
-    </script>
 
+    <div class="container container_standard movie_container">
+      <div class="container-content">
+        <div class="title-container">
+          <h1 class="title-container--title">Elegir productos</h1>
+        </div>
+        <form class="product-form" method="POST" action="guardar_productos.php">
+          <div class="productos-lista">
+            <?php foreach ($productos as $index => $producto): ?>
+              <div class="producto-item">
+                <p><strong><?= htmlspecialchars($producto['nombre']) ?></strong></p>
+                <p>Precio: S/ <?= number_format($producto['precio'], 2) ?></p>
+                <p>Stock disponible: <?= intval($producto['cantidad']) ?></p>
+
+                <input type="hidden" name="productos[<?= $index ?>][id_producto]" value="<?= intval($producto['id_producto']) ?>">
+                <label>
+                  Cantidad:
+                  <input type="number" name="productos[<?= $index ?>][cantidad]" min="0" max="<?= intval($producto['cantidad']) ?>" value="0" step="1">
+                </label>
+              </div>
+            <?php endforeach; ?>
+          </div>
+          <button class="button-product-form" type="submit">Continuar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
