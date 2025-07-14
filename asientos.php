@@ -9,6 +9,12 @@ session_start();
 if (isset($_GET['id_pelicula'])) {
     $_SESSION['id_pelicula'] = $_GET['id_pelicula'];
 }
+if (isset($_GET['id_funcion'])) {
+    $_SESSION['id_funcion'] = $_GET['id_funcion'];
+}
+if (isset($_GET['id_ciudad'])) {
+    $_SESSION['id_ciudad'] = $_GET['id_ciudad'];
+}
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['asientos'])) {
     $_SESSION['asientos'] = $_POST['asientos'];
     // Optionally redirect or show a confirmation
