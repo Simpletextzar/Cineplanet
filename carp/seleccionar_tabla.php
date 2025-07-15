@@ -1,4 +1,4 @@
-<form action="formulario_dinamico.php" method="GET">
+<form action="listar_tabla.php" method="GET">
     <label>Selecciona una tabla:</label>
     <select name="tabla" required>
         <option value="productos">Productos</option>
