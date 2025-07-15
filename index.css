@@ -60,3 +60,10 @@ a {
     color: #D6D7DA;
     justify-self: left;
 }
+#login-form > * {
+    justify-self: center;
+    display: flex;
+}
+#login-form-header-text {
+    text-align: center;
+}

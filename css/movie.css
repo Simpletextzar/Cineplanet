@@ -66,3 +66,12 @@ a.button-showtime-selector{
     padding: .4rem;
     font-weight: 700;
 }
+#form_principal {
+    flex-direction: column;
+    display: flex;
+}
+.horario-btn {
+    /* modificar el boton si quieren, pero creo que lo dejaremos default */
+    margin-bottom: 1rem;
+    margin-right: 1rem;
+}

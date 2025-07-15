@@ -1,10 +1,7 @@
 <?php
 session_start();
 
-echo '<pre>';
-print_r($_SESSION['compra']);
-echo '</pre>';
-// ✅ Si el usuario eligió método de pago
+// Si el usuario eligió método de pago
 if (isset($_POST['metodo_pago'])) {
   $_SESSION['compra']['metodo_pago'] = $_POST['metodo_pago'];
 
@@ -13,7 +10,7 @@ if (isset($_POST['metodo_pago'])) {
   exit;
 }
 
-// ✅ Si hizo clic en ‘Volver a cartelera’
+// Si hizo clic en ‘Volver a cartelera’
 if (isset($_POST['accion']) && $_POST['accion'] === 'volver') {
   include 'conexion.php';
 
@@ -31,7 +28,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'volver') {
   exit;
 }
 
-// ✅ Si hizo clic en ‘Realizar pago’, muestra formulario
+// Si hizo clic en ‘Realizar pago’, muestra formulario
 if (isset($_POST['accion']) && $_POST['accion'] === 'pagar') {
   ?>
   <!DOCTYPE html>
@@ -47,6 +44,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'pagar') {
       }
       h3 {
         margin-bottom: 20px;
+        text-align: center;
       }
       form {
         background: #fff;
@@ -88,7 +86,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'pagar') {
   exit;
 }
 
-// ✅ Vista inicial: volver o pagar
+// Vista inicial: volver o pagar
 ?>
 
 <!DOCTYPE html>
@@ -105,6 +103,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'pagar') {
     }
     h3 {
       margin-bottom: 20px;
+      text-align: center;
     }
     form {
       display: inline-block;

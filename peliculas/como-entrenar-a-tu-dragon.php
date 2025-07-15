@@ -49,6 +49,7 @@ $stmt->close();
 <body>
 <div id="root">
   <div class="home-page">
+    <!-- Barra de navegacion -->
     <div class="hero-header">
       <div class="header">
         <div class="header--content">
@@ -84,7 +85,7 @@ $stmt->close();
           </div>
           <div class="movie-grid--sinopsis">
             <h2>Sinopsis</h2>
-            <p>En la isla de Berk... (sinopsis resumida)</p>
+            <p>En la isla de Berk, donde los vikingos y los dragones han sido enemigos por generaciones, Hipo se distingue. El ingenioso, pero olvidado, hijo del Jefe Estoico el Vasto, Hipo desafía siglos de tradición cuando hace amistad con Chimuelo, el temido dragón Furia Nocturna. Su vínculo inusual revela la verdadera naturaleza de los dragones, retando las fundaciones de la sociedad vikinga.</p>
           </div>
         </div>
       </div>
@@ -96,11 +97,12 @@ $stmt->close();
         <div class="title-container">
           <h1 class="title-container--title">Selecciona tu función</h1>
         </div>
+        <!-- Formulario princiapal -->
         <form id="form_principal" action="../guardar_funcion.php" method="post">
           <input type="hidden" name="id_pelicula" value="<?php echo htmlspecialchars($id_pelicula); ?>">
           <input type="hidden" name="id_funcion" id="id_funcion">
-
-          <label>Ciudad:</label><br>
+          <!-- Selector ciudad -->
+          <label>Ciudad:</label>
           <select name="id_ciudad" id="id_ciudad" required>
             <option value="">Seleccione Ciudad</option>
             <?php while ($ciudad = $ciudades->fetch_assoc()): ?>
@@ -109,13 +111,13 @@ $stmt->close();
               </option>
             <?php endwhile; ?>
           </select>
-
-          <label>Cine:</label><br>
+          <!-- Selector cine -->
+          <label>Cine:</label>
           <select name="id_cine" id="id_cine" required>
             <option value="">Seleccione primero una ciudad</option>
           </select>
-
-          <label>Fecha:</label><br>
+          <!-- Selector fecha -->
+          <label>Fecha:</label>
           <select name="fecha_funcion" id="fecha_funcion" required>
             <option value="">Seleccione primero un cine</option>
           </select>

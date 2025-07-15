@@ -1,10 +1,6 @@
 <?php
 session_start();
 
-echo '<pre>';
-print_r($_SESSION['compra']);
-echo '</pre>';
-
 // Si necesitas la cantidad:
 $cantidad_asientos = count($_SESSION['compra']['asientos']);
 ?>
@@ -15,7 +11,6 @@ $cantidad_asientos = count($_SESSION['compra']['asientos']);
   <meta charset="UTF-8">
   <title>Seleccionar Tipo de Boleto</title>
 
-  <!-- ✅ Aquí va tu CSS embebido -->
   <style>
     body {
       font-family: Arial, sans-serif;

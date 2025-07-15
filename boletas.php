@@ -2,9 +2,7 @@
 include 'conexion.php';
 session_start();
 
-echo '<pre>';
-print_r($_SESSION['compra']);
-echo '</pre>';
+
 
 
 // ====================
@@ -33,7 +31,7 @@ $stmt->fetch();
 $stmt->close();
 
 // ====================
-// PELÍCULA
+// PELICULA
 // ====================
 $stmt = $mysqli->prepare("
   SELECT p.nombre 
@@ -48,7 +46,7 @@ $stmt->fetch();
 $stmt->close();
 
 // ====================
-// FUNCIÓN
+// FUNCION
 // ====================
 $stmt = $mysqli->prepare("
   SELECT fecha, hora, id_sala_cine 
@@ -142,15 +140,18 @@ if (!empty($productos) && $id_venta_producto) {
 <body>
 
   <!-- ==================== -->
-  <!-- BOLETA DE BOLETOS -->
+  <!-- BOLETA DE FUNCION -->
   <!-- ==================== -->
-  <h1>🎟️ Boleta de Boletos</h1>
+  <h1>🎟️ Boleta de funcion</h1>
 
   <p><strong>ID Venta Boleto:</strong> <?= htmlspecialchars($id_venta_boleto) ?></p>
   <p><strong>Cliente:</strong> <?= htmlspecialchars($nombre_cliente) . " " . htmlspecialchars($apellido_cliente) ?></p>
   <p><strong>Película:</strong> <?= htmlspecialchars($titulo_pelicula) ?></p>
   <p><strong>Fecha:</strong> <?= htmlspecialchars($fecha_funcion) ?></p>
-  <p><strong>Hora:</strong> <?= htmlspecialchars($hora_funcion) ?></p>
+  <?php
+    $hora_12 = date("g:i A", strtotime($hora_funcion));
+  ?>
+  <p><strong>Hora:</strong> <?= $hora_12 ?></p>
   <p><strong>Sala:</strong> <?= htmlspecialchars($num_sala) ?></p>
 
   <h3>Asientos seleccionados</h3>

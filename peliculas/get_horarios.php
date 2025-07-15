@@ -55,7 +55,7 @@ if (count($grupos) === 0) {
         echo "<h4>Idioma: ".htmlspecialchars($idioma)."</h4>";
 
         foreach ($horarios as $h) {
-            $hora = substr($h['hora'], 0, 5); // Quita segundos
+            $hora = date("g:i A", strtotime($h['hora'])); //Formato 12 horas am pm
             echo '<button type="button" class="horario-btn" data-id_funcion="'.$h['id_funcion'].'">'.$hora.'</button> ';
         }
 

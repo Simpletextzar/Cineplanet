@@ -28,9 +28,9 @@ if ($tiene_boletos) {
   if ($stmt->execute()) {
     $id_venta_boleto = $mysqli->insert_id;
     $_SESSION['compra']['id_venta_boleto'] = $id_venta_boleto;
-    echo "✅ Venta de boletos registrada: $id_venta_boleto <br>";
+    echo "Venta de boletos registrada: $id_venta_boleto <br>";
   } else {
-    echo "❌ Error insertar ventas_boletos: " . $stmt->error;
+    echo "Error insertar ventas_boletos: " . $stmt->error;
   }
   $stmt->close();
 }
@@ -41,21 +41,20 @@ if ($tiene_productos) {
   // Buscar primer empleado del cine con rol = 1
   $stmt = $mysqli->prepare("
     SELECT id_empleado FROM empleados 
-    WHERE id_cine = ? AND id_rol = 1 
+    WHERE id_empleado = 9999 AND id_rol = 1 
     LIMIT 1
   ");
   if (!$stmt) {
     die("Error prepare SELECT empleado: " . $mysqli->error);
   }
 
-  $stmt->bind_param("i", $id_cine);
   $stmt->execute();
   $stmt->bind_result($id_empleado);
   $stmt->fetch();
   $stmt->close();
 
   if (!$id_empleado) {
-    die("❌ No se encontró empleado con id_rol = 1 para ventas_productos.");
+    die("No se encontró empleado con id_rol = 1 para ventas_productos.");
   }
 
   $stmt = $mysqli->prepare("
@@ -70,9 +69,9 @@ if ($tiene_productos) {
   if ($stmt->execute()) {
     $id_venta_producto = $mysqli->insert_id;
     $_SESSION['compra']['id_venta_producto'] = $id_venta_producto;
-    echo "✅ Venta de productos registrada: $id_venta_producto <br>";
+    echo "Venta de productos registrada: $id_venta_producto <br>";
   } else {
-    echo "❌ Error insertar ventas_productos: " . $stmt->error;
+    echo "Error insertar ventas_productos: " . $stmt->error;
   }
   $stmt->close();
 }
@@ -83,7 +82,7 @@ echo "<p>Registro de ventas completado.</p>";
 <?php
 $id_funcion = $_SESSION['compra']['funcion'];
 
-// 1️⃣ Obtener precio base de la función
+// 1. Obtener precio base de la función
 $stmtPrecio = $mysqli->prepare("SELECT precio FROM funciones WHERE id_funcion = ?");
 $stmtPrecio->bind_param("i", $id_funcion);
 $stmtPrecio->execute();
@@ -91,16 +90,16 @@ $stmtPrecio->bind_result($precio_base);
 $stmtPrecio->fetch();
 $stmtPrecio->close();
 
-// 2️⃣ Datos base
+// 2. Datos base
 $tipos_boletos = $_SESSION['compra']['tipos_boletos'];
 $asientos = $_SESSION['compra']['asientos'];
 
 $detalle_boletos = [];
-$tipos_boletos_actualizados = []; // 👈 Inicializa el acumulador correcto
+$tipos_boletos_actualizados = []; // Inicializa el acumulador correcto
 
 $asiento_index = 0;
 
-// 3️⃣ Generar detalle de asientos por tipo y acumular cantidad/precio
+// 3. Generar detalle de asientos por tipo y acumular cantidad/precio
 foreach ($tipos_boletos as $tipo => $cantidad) {
 
   // Calcular precio unitario para este tipo
@@ -140,7 +139,7 @@ foreach ($tipos_boletos as $tipo => $cantidad) {
 
 $id_venta_boleto = $_SESSION['compra']['id_venta_boleto'];
 
-// 4️⃣ Insertar todos los detalles_boletos
+// 4. Insertar todos los detalles_boletos
 foreach ($detalle_boletos as $detalle) {
   $id_asiento = $detalle['id_asiento'];
   $tipo = $detalle['tipo'];
@@ -156,10 +155,10 @@ foreach ($detalle_boletos as $detalle) {
   $stmt->close();
 }
 
-// 5️⃣ Guardar estructura final en session para usarla en boleta
+// 5. Guardar estructura final en session para usarla en boleta
 $_SESSION['compra']['tipos_boletos'] = $tipos_boletos_actualizados;
 
-// 6️⃣ Actualizar total de la venta
+// 6. Actualizar total de la venta
 $mysqli->query("
   UPDATE ventas_boletos 
   SET total = (SELECT SUM(precio) FROM detalles_boletos WHERE id_venta_boleto = $id_venta_boleto)
