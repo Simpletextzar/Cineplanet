@@ -10,7 +10,7 @@ $id_ciudad = $_POST['id_ciudad'];
 $id_pelicula = $_POST['id_pelicula'];
 
 // Conexión
-include 'conexion.php'; 
+include '../conexion.php'; 
 
 $sql = "
     SELECT DISTINCT cines.id_cine, cines.nombre

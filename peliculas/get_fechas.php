@@ -10,7 +10,7 @@ $id_cine = $_POST['id_cine'];
 $id_pelicula = $_POST['id_pelicula'];
 
 // Conexión
-include 'conexion.php';
+include '../conexion.php'; 
 
 $sql = "
     SELECT DISTINCT funciones.fecha

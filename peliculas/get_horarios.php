@@ -11,8 +11,7 @@ $id_pelicula = $_POST['id_pelicula'];
 $fecha = $_POST['fecha'];
 
 // Conexión
-include 'conexion.php'; 
-
+include '../conexion.php'; 
 $sql = "
     SELECT 
         funciones.id_funcion,

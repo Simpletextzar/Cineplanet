@@ -62,7 +62,7 @@ $mysqli->close();
   <h1>Selecciona Ciudad, Cine y Fecha</h1>
 
   <!-- Formulario principal -->
-  <form id="form_principal" action="elegir_asientos.php" method="post">
+  <form id="form_principal" action="guardar_funcion.php" method="post">
     <!-- ID película siempre va -->
     <input type="hidden" name="id_pelicula" value="<?php echo htmlspecialchars($id_pelicula); ?>">
     <!-- ID función se pone al elegir horario -->
