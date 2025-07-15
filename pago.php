@@ -5,8 +5,8 @@ session_start();
 if (isset($_POST['metodo_pago'])) {
   $_SESSION['compra']['metodo_pago'] = $_POST['metodo_pago'];
 
-  // Redirige a boleta.php
-  header("Location: boleta.php");
+  // Redirige a guardar_compra.php
+  header("Location: guardar_compra.php");
   exit;
 }
 

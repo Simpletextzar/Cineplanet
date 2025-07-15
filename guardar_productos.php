@@ -1,30 +1,30 @@
 <?php
+include 'conexion.php';
 session_start();
 
-// Limpiar productos previos
-$_SESSION['compra']['productos'] = [];
+$_SESSION['compra']['productos'] = []; 
 
-// Verificar que lleguen productos como array de arrays
-if (isset($_POST['productos']) && is_array($_POST['productos'])) {
-  foreach ($_POST['productos'] as $producto) {
-    // Validar estructura
-    if (
-      isset($producto['id_producto']) &&
-      isset($producto['cantidad'])
-    ) {
-      $id_producto = intval($producto['id_producto']);
-      $cantidad = intval($producto['cantidad']);
+if (isset($_POST['productos'])) {
+  foreach ($_POST['productos'] as $id_producto => $cantidad) {
+    $cantidad = intval($cantidad);
+    if ($cantidad > 0) {
+      // 🔍 Obtener precio unitario
+      $stmt = $mysqli->prepare("SELECT precio FROM productos WHERE id_producto = ?");
+      $stmt->bind_param("i", $id_producto);
+      $stmt->execute();
+      $stmt->bind_result($precio_unitario);
+      $stmt->fetch();
+      $stmt->close();
 
-      if ($cantidad > 0) {
-        $_SESSION['compra']['productos'][] = [
-          'id_producto' => $id_producto,
-          'cantidad' => $cantidad
-        ];
-      }
+      $_SESSION['compra']['productos'][] = [
+        'id_producto' => $id_producto,
+        'cantidad'    => $cantidad,
+        'precio'      => $precio_unitario
+      ];
     }
   }
 }
 
-// Redirigir a pago.php
 header("Location: pago.php");
 exit;
+?>

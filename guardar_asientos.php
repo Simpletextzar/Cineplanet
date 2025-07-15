@@ -24,5 +24,5 @@ foreach ($asientos_nuevos as $id_asiento) {
 $_SESSION['compra']['asientos'] = $asientos_nuevos;
 
 // Redirigir al siguiente paso
-header("Location: elegir_tipo_asiento.php");
+header("Location: login_cliente.php");
 exit;

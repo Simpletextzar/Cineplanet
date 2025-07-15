@@ -19,10 +19,10 @@ $cantidad_asientos = count($_SESSION['compra']['asientos']);
   <input type="number" name="tipos_boletos[General]" value="0" min="0"><br>
 
   <label>Adulto Mayor:</label>
-  <input type="number" name="tipos_boletos[AdultoMayor]" value="0" min="0"><br>
+  <input type="number" name="tipos_boletos[Adulto Mayor]" value="0" min="0"><br>
 
   <label>Niño:</label>
-  <input type="number" name="tipos_boletos[Nino]" value="0" min="0"><br>
+  <input type="number" name="tipos_boletos[Niño]" value="0" min="0"><br>
 
   <input type="hidden" id="cantidad_asientos" value="<?php echo $cantidad_asientos; ?>">
 
@@ -32,8 +32,8 @@ $cantidad_asientos = count($_SESSION['compra']['asientos']);
 <script>
 function validarBoletos() {
   const general = parseInt(document.querySelector('[name="tipos_boletos[General]"]').value) || 0;
-  const adultoMayor = parseInt(document.querySelector('[name="tipos_boletos[AdultoMayor]"]').value) || 0;
-  const nino = parseInt(document.querySelector('[name="tipos_boletos[Nino]"]').value) || 0;
+  const adultoMayor = parseInt(document.querySelector('[name="tipos_boletos[Adulto Mayor]"]').value) || 0;
+  const nino = parseInt(document.querySelector('[name="tipos_boletos[Niño]"]').value) || 0;
 
   const totalBoletos = general + adultoMayor + nino;
   const cantidadAsientos = parseInt(document.getElementById('cantidad_asientos').value);

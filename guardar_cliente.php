@@ -1,25 +1,46 @@
 <?php
+include 'conexion.php'; // Asegúrate de incluir la conexión a la BD
 session_start();
 
 $nombre = trim($_POST['nombre']);
 $correo = trim($_POST['correo']);
 
-// Validación básica (puedes añadir validación contra BD aquí si fuera necesario)
+// Validar formato básico de correo
 if (!empty($nombre) && filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-    // Guardar los datos del cliente en sesión
-    $_SESSION['cliente'] = [
-        'nombre' => $nombre,
-        'correo' => $correo
-    ];
+    // Verificar si el cliente existe en la tabla `clientes`
+    $stmt = $mysqli->prepare("
+        SELECT id_cliente 
+        FROM clientes 
+        WHERE nombre = ? AND email = ?
+        LIMIT 1
+    ");
+    $stmt->bind_param("ss", $nombre, $correo);
+    $stmt->execute();
+    $stmt->bind_result($id_cliente);
+    $stmt->fetch();
+    $stmt->close();
 
-    // Redirigir a elegir_tipo_asiento.php
-    header("Location: elegir_tipo_asiento.php");
-    exit;
+    if ($id_cliente) {
+        // Cliente encontrado: guardar su ID en la sesión
+        $_SESSION['cliente'] = $id_cliente;
+
+        // Redirigir a elegir_tipo_asiento.php
+        header("Location: elegir_tipo_asiento.php");
+        exit;
+    } else {
+        // Cliente NO registrado: mostrar mensaje y volver a login_cliente.php
+        echo "<script>
+            alert('Usuario no registrado. Por favor, verifica tus datos.');
+            window.location.href = 'login_cliente.php';
+        </script>";
+        exit;
+    }
 } else {
-    // Si falla, mostrar alerta y regresar a login_cliente.php
+    // Datos inválidos: formato incorrecto
     echo "<script>
         alert('Datos inválidos. Por favor, ingresa un nombre y un correo válidos.');
         window.location.href = 'login_cliente.php';
     </script>";
     exit;
 }
+?>

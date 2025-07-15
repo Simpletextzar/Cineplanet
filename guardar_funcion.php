@@ -10,7 +10,9 @@ $_SESSION['compra'] = [
   'asientos' => [],
   'tipos_boletos' => [],
   'productos' => [],
-  'metodo_pago' => null 
+  'metodo_pago' => null,
+  'id_venta_boleto' => null,
+  'id_venta_producto' => null 
 ];
 
 header("Location: asientos.php");

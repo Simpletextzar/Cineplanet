@@ -26,6 +26,14 @@ while ($row = $result->fetch_assoc()) {
 }
 ?>
 
+<?php
+// 2️⃣ Mostrar estructura actual
+echo '<h3>Estado actual de la compra:</h3>';
+echo '<pre>';
+print_r($_SESSION['compra']);
+echo '</pre>';
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
