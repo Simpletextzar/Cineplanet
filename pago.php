@@ -64,7 +64,7 @@ if (isset($_POST['accion']) && $_POST['accion'] === 'pagar') {
     <form action="pago.php" method="post">
       <label><input type="radio" name="metodo_pago" value="Efectivo" required> Efectivo en taquilla</label>
       <label><input type="radio" name="metodo_pago" value="Tarjeta"> Tarjeta de crédito/débito</label>
-      <label><input type="radio" name="metodo_pago" value="Yape/Plin"> Yape / Plin</label>
+      <label><input type="radio" name="metodo_pago" value="Online"> Yape / Plin</label>
       <button type="submit">Finalizar Pago</button>
     </form>
   </body>

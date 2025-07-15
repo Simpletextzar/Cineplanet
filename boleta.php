@@ -1,76 +1,76 @@
 <?php
+include 'conexion.php';
 session_start();
 
-echo '<h2>Resumen Final de Compra:</h2>';
-echo '<pre>';
-print_r($_SESSION['compra']);
-echo '</pre>';
+// Obtén los datos base
+$id_cliente  = $_SESSION['compra']['cliente'];
+$id_cine     = $_SESSION['compra']['cine'];
+$metodo_pago = $_SESSION['compra']['metodo_pago'];
 
+// Determina si hay boletos o productos
+$tiene_boletos   = !empty($_SESSION['compra']['asientos']);
+$tiene_productos = !empty($_SESSION['compra']['productos']);
 
-$compra = $_SESSION['compra'] ?? null;
+// Guardar ID de venta para cada tipo
+$id_venta_boleto   = null;
+$id_venta_producto = null;
 
-if (!$compra) {
-  echo "<h2>No hay datos de compra.</h2>";
-  exit;
-}
-
-echo "<h1>🎟️ Tu Boleta de Compra</h1>";
-
-echo "<h3>🎬 Película:</h3>";
-echo "<p>ID Película: " . htmlspecialchars($compra['pelicula'] ?? '---') . "</p>";
-
-echo "<h3>🎟️ Función:</h3>";
-echo "<p>ID Función: " . htmlspecialchars($compra['funcion'] ?? '---') . "</p>";
-
-echo "<h3>📍 Cine:</h3>";
-echo "<p>ID Cine: " . htmlspecialchars($compra['cine'] ?? '---') . "</p>";
-
-echo "<h3>🌍 Ciudad:</h3>";
-echo "<p>ID Ciudad: " . htmlspecialchars($compra['ciudad'] ?? '---') . "</p>";
-
-echo "<h3>💺 Asientos:</h3>";
-if (!empty($compra['asientos'])) {
-  echo "<ul>";
-  foreach ($compra['asientos'] as $asiento) {
-    echo "<li>" . htmlspecialchars($asiento) . "</li>";
-  }
-  echo "</ul>";
-} else {
-  echo "<p>No seleccionaste asientos.</p>";
-}
-
-echo "<h3>🎫 Tipos de boletos:</h3>";
-
-$tipos_validos = false; // bandera para saber si hay alguno > 0
-
-if (!empty($compra['tipos_boletos'])) {
-  echo "<ul>";
-  foreach ($compra['tipos_boletos'] as $tipo => $cantidad) {
-    if (intval($cantidad) > 0) {
-      echo "<li>$tipo: " . intval($cantidad) . "</li>";
-      $tipos_validos = true;
-    }
-  }
-  echo "</ul>";
-
-  if (!$tipos_validos) {
-    echo "<p>No hay tipos de boletos seleccionados.</p>";
+// ---------------------------------
+// Insertar en ventas_boletos (si aplica)
+if ($tiene_boletos) {
+  $stmt = $mysqli->prepare("
+    INSERT INTO ventas_boletos (id_cliente, id_cine, fecha_venta, total, metodo_pago)
+    VALUES (?, ?, NOW(), NULL, ?)
+  ");
+  if (!$stmt) {
+    die("Error prepare ventas_boletos: " . $mysqli->error);
   }
 
-} else {
-  echo "<p>No hay tipos de boletos.</p>";
-}
-
-echo "<h3>🍿 Productos:</h3>";
-if (!empty($compra['productos'])) {
-  echo "<ul>";
-  foreach ($compra['productos'] as $producto) {
-    echo "<li>" . htmlspecialchars($producto['id_producto']) . ": " . intval($producto['cantidad']) . "</li>";
+  $stmt->bind_param("iis", $id_cliente, $id_cine, $metodo_pago);
+  if ($stmt->execute()) {
+    $id_venta_boleto = $mysqli->insert_id;
+    $_SESSION['compra']['id_venta_boleto'] = $id_venta_boleto;
+    echo "✅ Venta de boletos registrada: $id_venta_boleto <br>";
+  } else {
+    echo "❌ Error insertar ventas_boletos: " . $stmt->error;
   }
-  echo "</ul>";
-} else {
-  echo "<p>No elegiste productos.</p>";
+  $stmt->close();
 }
 
-echo "<h3>💳 Método de pago:</h3>";
-echo "<p>" . htmlspecialchars($compra['metodo_pago'] ?? 'No especificado') . "</p>";
+// ---------------------------------
+// Insertar en ventas_productos (si aplica)
+if ($tiene_productos) {
+  // Buscar primer empleado del cine
+  $stmt = $mysqli->prepare("SELECT id_empleado FROM empleados WHERE id_cine = ? LIMIT 1");
+  $stmt->bind_param("i", $id_cine);
+  $stmt->execute();
+  $stmt->bind_result($id_empleado);
+  $stmt->fetch();
+  $stmt->close();
+
+  if (!$id_empleado) {
+    die("❌ No se encontró empleado para ventas_productos.");
+  }
+
+  $stmt = $mysqli->prepare("
+    INSERT INTO ventas_productos (id_cliente, id_empleado, id_cine, fecha_venta, total, metodo_pago)
+    VALUES (?, ?, ?, NOW(), NULL, ?)
+  ");
+  if (!$stmt) {
+    die("Error prepare ventas_productos: " . $mysqli->error);
+  }
+
+  $stmt->bind_param("iiis", $id_cliente, $id_empleado, $id_cine, $metodo_pago);
+  if ($stmt->execute()) {
+    $id_venta_producto = $mysqli->insert_id;
+    $_SESSION['compra']['id_venta_producto'] = $id_venta_producto;
+    echo "✅ Venta de productos registrada: $id_venta_producto <br>";
+  } else {
+    echo "❌ Error insertar ventas_productos: " . $stmt->error;
+  }
+  $stmt->close();
+}
+
+// ---------------------------------
+echo "<p>Ventas registradas correctamente.</p>";
+?>
