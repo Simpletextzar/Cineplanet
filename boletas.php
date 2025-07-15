@@ -2,6 +2,11 @@
 include 'conexion.php';
 session_start();
 
+echo '<pre>';
+print_r($_SESSION['compra']);
+echo '</pre>';
+
+
 // ====================
 // VARIABLES GLOBALES
 // ====================
@@ -214,7 +219,13 @@ if (!empty($productos) && $id_venta_producto) {
       <tbody>
         <?php foreach ($productos as $prod): ?>
           <?php
-            $nombre_producto = htmlspecialchars($prod['nombre']);
+            $id_producto = intval($prod['id_producto']);
+            $stmt = $mysqli->prepare("SELECT nombre FROM productos WHERE id_producto = ?");
+            $stmt->bind_param("i", $id_producto);
+            $stmt->execute();
+            $stmt->bind_result($nombre_producto);
+            $stmt->fetch();
+            $stmt->close();
             $cantidad = intval($prod['cantidad']);
             $precio_unitario = floatval($prod['precio']);
             $subtotal = $cantidad * $precio_unitario;

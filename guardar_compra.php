@@ -83,20 +83,46 @@ echo "<p>Registro de ventas completado.</p>";
 <?php
 $id_funcion = $_SESSION['compra']['funcion'];
 
+// 1️⃣ Obtener precio base de la función
 $stmtPrecio = $mysqli->prepare("SELECT precio FROM funciones WHERE id_funcion = ?");
 $stmtPrecio->bind_param("i", $id_funcion);
 $stmtPrecio->execute();
 $stmtPrecio->bind_result($precio_base);
 $stmtPrecio->fetch();
 $stmtPrecio->close();
+
+// 2️⃣ Datos base
 $tipos_boletos = $_SESSION['compra']['tipos_boletos'];
 $asientos = $_SESSION['compra']['asientos'];
 
 $detalle_boletos = [];
+$tipos_boletos_actualizados = []; // 👈 Inicializa el acumulador correcto
 
 $asiento_index = 0;
 
+// 3️⃣ Generar detalle de asientos por tipo y acumular cantidad/precio
 foreach ($tipos_boletos as $tipo => $cantidad) {
+
+  // Calcular precio unitario para este tipo
+  switch ($tipo) {
+    case 'General':
+      $precio_final = $precio_base;
+      break;
+    case 'Niño':
+      $precio_final = $precio_base * 0.5;
+      break;
+    case 'Adulto Mayor':
+      $precio_final = $precio_base * 0.6;
+      break;
+  }
+
+  // Guarda cantidad y precio unitario una sola vez por tipo
+  $tipos_boletos_actualizados[$tipo] = [
+    'cantidad' => $cantidad,
+    'precio_unitario' => $precio_final
+  ];
+
+  // Generar detalles de asiento por cada cantidad
   for ($i = 0; $i < $cantidad; $i++) {
     if (!isset($asientos[$asiento_index])) {
       die("Error: Faltan asientos para la cantidad de tipos de boletos.");
@@ -104,7 +130,8 @@ foreach ($tipos_boletos as $tipo => $cantidad) {
 
     $detalle_boletos[] = [
       'id_asiento' => $asientos[$asiento_index],
-      'tipo' => $tipo
+      'tipo' => $tipo,
+      'precio' => $precio_final
     ];
 
     $asiento_index++;
@@ -113,27 +140,11 @@ foreach ($tipos_boletos as $tipo => $cantidad) {
 
 $id_venta_boleto = $_SESSION['compra']['id_venta_boleto'];
 
+// 4️⃣ Insertar todos los detalles_boletos
 foreach ($detalle_boletos as $detalle) {
   $id_asiento = $detalle['id_asiento'];
   $tipo = $detalle['tipo'];
-
-  // Ajustar precio según tipo
-  switch ($tipo) {
-    case 'General':
-      $precio_final = $precio_base;
-      break;
-    case 'Nino':
-      $precio_final = $precio_base * 0.5; // 50% descuento
-      break;
-    case 'AdultoMayor':
-      $precio_final = $precio_base * 0.6; // 40% descuento
-      break;
-  }
-
-  $tipos_boletos_actualizados[$tipo] = [
-    'cantidad' => $cantidad,
-    'precio_unitario' => $precio
-  ];
+  $precio_final = $detalle['precio'];
 
   $stmt = $mysqli->prepare("
     INSERT INTO detalles_boletos 
@@ -145,14 +156,17 @@ foreach ($detalle_boletos as $detalle) {
   $stmt->close();
 }
 
+// 5️⃣ Guardar estructura final en session para usarla en boleta
 $_SESSION['compra']['tipos_boletos'] = $tipos_boletos_actualizados;
 
+// 6️⃣ Actualizar total de la venta
 $mysqli->query("
   UPDATE ventas_boletos 
   SET total = (SELECT SUM(precio) FROM detalles_boletos WHERE id_venta_boleto = $id_venta_boleto)
   WHERE id_venta_boleto = $id_venta_boleto
 ");
 ?>
+
 
 <?php
 $id_venta_producto = $_SESSION['compra']['id_venta_producto'];

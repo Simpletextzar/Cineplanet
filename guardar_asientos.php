@@ -4,7 +4,7 @@ include 'conexion.php';
 
 // Validar asientos recibidos
 if (!isset($_POST['asientos']) || !is_array($_POST['asientos']) || empty($_POST['asientos'])) {
-  header("Location: elegir_asientos.php");
+  header("Location: asientos.php");
   exit;
 }
 

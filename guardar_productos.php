@@ -5,22 +5,23 @@ session_start();
 $_SESSION['compra']['productos'] = []; 
 
 if (isset($_POST['productos'])) {
-  foreach ($_POST['productos'] as $id_producto => $cantidad) {
-    $cantidad = intval($cantidad);
+  foreach ($_POST['productos'] as $producto) {
+    $id_producto = intval($producto['id_producto']);
+    $cantidad = intval($producto['cantidad']);
+
     if ($cantidad > 0) {
-      // 🔍 Obtener precio unitario
       $stmt = $mysqli->prepare("SELECT precio FROM productos WHERE id_producto = ?");
       $stmt->bind_param("i", $id_producto);
       $stmt->execute();
       $stmt->bind_result($precio_unitario);
-      $stmt->fetch();
+      if ($stmt->fetch()) {
+        $_SESSION['compra']['productos'][] = [
+          'id_producto' => $id_producto,
+          'cantidad'    => $cantidad,
+          'precio'      => $precio_unitario
+        ];
+      }
       $stmt->close();
-
-      $_SESSION['compra']['productos'][] = [
-        'id_producto' => $id_producto,
-        'cantidad'    => $cantidad,
-        'precio'      => $precio_unitario
-      ];
     }
   }
 }

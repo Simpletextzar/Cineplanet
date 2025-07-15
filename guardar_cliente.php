@@ -22,7 +22,7 @@ if (!empty($nombre) && filter_var($correo, FILTER_VALIDATE_EMAIL)) {
 
     if ($id_cliente) {
         // Cliente encontrado: guardar su ID en la sesión
-        $_SESSION['cliente'] = $id_cliente;
+        $_SESSION['compra']['cliente'] = $id_cliente;
 
         // Redirigir a elegir_tipo_asiento.php
         header("Location: elegir_tipo_asiento.php");

@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+echo '<pre>';
+print_r($_SESSION['compra']);
+echo '</pre>';
 // ✅ Si el usuario eligió método de pago
 if (isset($_POST['metodo_pago'])) {
   $_SESSION['compra']['metodo_pago'] = $_POST['metodo_pago'];
