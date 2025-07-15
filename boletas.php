@@ -180,6 +180,9 @@ if (!empty($productos) && $id_venta_producto) {
     <?php
       foreach ($tipos_boletos as $tipo => $info) {
         $cantidad = $info['cantidad'];
+        if ($cantidad <= 0) {
+          continue;
+        }
         $precio_unitario = $info['precio_unitario'];
         $subtotal = $cantidad * $precio_unitario;
         echo "<tr>

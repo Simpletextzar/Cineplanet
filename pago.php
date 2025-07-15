@@ -15,7 +15,19 @@ if (isset($_POST['metodo_pago'])) {
 
 // ✅ Si hizo clic en ‘Volver a cartelera’
 if (isset($_POST['accion']) && $_POST['accion'] === 'volver') {
-  header("Location: cartelera.php");
+  include 'conexion.php';
+
+  if (!empty($_SESSION['compra']['asientos'])) {
+    foreach ($_SESSION['compra']['asientos'] as $id_asiento) {
+      $stmt = $mysqli->prepare("UPDATE asientos SET id_estado = 1 WHERE id_asiento = ?");
+      $stmt->bind_param("i", $id_asiento);
+      $stmt->execute();
+      $stmt->close();
+    }
+  }
+
+  unset($_SESSION['compra']);
+  header("Location: index.html");
   exit;
 }
 
